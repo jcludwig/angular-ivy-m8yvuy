@@ -1,3 +1,10 @@
-<p>
-visual-container works!
-</p>
+<div>
+    {{visualContainer.title}}
+</div>
+
+<div>
+    Query:
+    {{visualContainer.config.query}}
+</div>
+
+<button (click)="onSelectDatapoint()">select datapoint</button>

@@ -3,11 +3,13 @@ export interface State {
 }
 
 export interface ExplorationState {
+  currentSectionId?: string;
   sections: SectionState[];
 }
 
 export interface SectionState {
   id: string;
+  title: string;
   visualContainers: VisualContainerState[];
 }
 

@@ -32,3 +32,8 @@ export const removeVisualContainer = createAction(
 export const mutateVisualContainer = createAction(
   namespace + "Mutate Visual Container"
 );
+
+export const selectDatapoint = createAction(
+  namespace + "Select Datapoint",
+  props<{ vc: VisualContainerState, datapoint: string }>(),
+)

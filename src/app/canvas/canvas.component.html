@@ -1,5 +1,6 @@
 <p>
-	Canvas!
+{{section?.title}}
 </p>
-<app-visual-container *ngFor="let vc of vcs">
+
+<app-visual-container *ngFor="let vc of (visualContainers$ | async)" [visualContainer]="vc">
 </app-visual-container>
