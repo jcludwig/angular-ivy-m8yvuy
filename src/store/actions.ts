@@ -1,13 +1,16 @@
 import { createAction, props } from "@ngrx/store";
-import { SectionState, VisualContainerState } from "./state";
+import { SectionState, SectionStateId, VisualContainerState } from "./state";
 
 const namespace = "[Exporation] ";
 
+export const createBlankExploration = createAction(
+  namespace + "Create Blank Exploration",
+);
+
 // --- Sections
 
-export const addSection = createAction(
-  namespace + "Add Section",
-  props<{ section: SectionState }>()
+export const createBlankSection = createAction(
+  namespace + "Create Blank Section",
 );
 
 export const removeSection = createAction(
@@ -15,13 +18,23 @@ export const removeSection = createAction(
   props<{ section: SectionState }>()
 );
 
+export const navigateSection = createAction(
+  namespace + "Navigate Section",
+  props<{ section: SectionStateId }>(),
+)
+
 export const mutateSection = createAction(namespace + "Mutate Section");
 
 // --- Visual Container
 
+export const createVisualContainer = createAction(
+  namespace + "Create Visual Container",
+  props<{ targetSectionId: SectionStateId; }>()
+);
+
 export const addVisualContainer = createAction(
   namespace + "Add Visual Container",
-  props<{ section: SectionState; vc: VisualContainerState }>()
+  props<{ targetSectionId: SectionStateId; vc: VisualContainerState }>()
 );
 
 export const removeVisualContainer = createAction(
@@ -35,5 +48,5 @@ export const mutateVisualContainer = createAction(
 
 export const selectDatapoint = createAction(
   namespace + "Select Datapoint",
-  props<{ vc: VisualContainerState, datapoint: string }>(),
+  props<{ targetVC: VisualContainerState, datapoint: string }>(),
 )

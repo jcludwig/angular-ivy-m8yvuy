@@ -1,0 +1,14 @@
+<ng-container *ngIf="(section$ | async) as section">
+    <div class="container" [style.backgroundColor]="section.background">
+        <p>
+        {{section.title}}
+        </p>
+
+        <button (click)="newVisualContainer()">+</button>
+
+        <app-visual-container
+            *ngFor="let vc of (visualContainers$ | async)"
+            [visualContainer]="vc">
+        </app-visual-container>
+    </div>
+</ng-container>

@@ -1,0 +1,9 @@
+<button class="newSection" (click)="newSection()">+</button>
+
+<div
+    class="section"
+    *ngFor="let section of (sections$ | async)"
+    (click)="navToSection(section)"
+    [style.backgroundColor]="section.background">
+    {{section.title}}
+</div>

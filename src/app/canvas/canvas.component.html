@@ -1,6 +1,10 @@
-<p>
-{{section?.title}}
-</p>
+<app-section-container *ngIf="(currentSection$ | async) else noSection" [sectionId]="currentSection$ | async">
+</app-section-container>
+<ng-template #noSection>
+    <div class="noSection">
+        No section
+    </div>
+</ng-template>
 
-<app-visual-container *ngFor="let vc of (visualContainers$ | async)" [visualContainer]="vc">
-</app-visual-container>
+<app-canvas-footer [sectionIds]="sections$ | async">
+</app-canvas-footer>

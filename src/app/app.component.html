@@ -1,3 +1,9 @@
+<button (click)="onCreateExploration()">Create Exploration</button>
 
-<app-canvas [section]="currentSection$ | async">
+<app-canvas
+    *ngIf="(currentExploration$ | async) as currentExploration else noExploration"
+    [explorationId]="currentExploration.id">
 </app-canvas>
+<ng-template #noExploration>
+    No Exploration
+</ng-template>

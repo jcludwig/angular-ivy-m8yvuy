@@ -1,0 +1,21 @@
+:host {
+    border: 3px solid blue;
+    height: 100px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.section {
+    border: 2px solid brown;
+    width: 75px;
+    padding: 10px;
+    margin: 10px;
+}
+
+.newSection {
+    height: 30px;
+    width: 30px;
+    margin: 10px;
+}

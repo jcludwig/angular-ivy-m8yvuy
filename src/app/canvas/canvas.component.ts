@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { SectionState, State, VisualContainerState } from "../../store/state";
+import { switchMap } from "rxjs/operators";
+import { selectCurrentSectionId, selectSectionIds } from "src/store/selectors";
+import { AppState, ExplorationStateId, SectionStateId } from "../../store/state";
 import { RxComponent } from "../rxcomponent/rx.component";
 
 interface Bindings {
-  section: SectionState;
+  explorationId: ExplorationStateId;
 }
 
 @Component({
@@ -16,17 +17,22 @@ interface Bindings {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CanvasComponent extends RxComponent<Bindings> {
+
   @Input()
-  section: SectionState;
+  public explorationId: ExplorationStateId;
 
-  public visualContainers$: Observable<VisualContainerState[]>;
+  public currentSection$: Observable<SectionStateId>;
+  public sections$: Observable<SectionStateId[]>;
 
-  constructor(store: Store<State>) {
+  constructor(store: Store<AppState>) {
     super();
 
-    const section$ = this.changes$("section");
-    this.visualContainers$ = section$.pipe(
-      map((section) => section.visualContainers),
+    this.sections$ = this.changes$('explorationId').pipe(
+      switchMap((explorationId) => store.select(selectSectionIds, { explorationId }))
+    );
+
+    this.currentSection$ = this.changes$('explorationId').pipe(
+      switchMap((explorationId) => store.select(selectCurrentSectionId, { explorationId }))
     );
   }
 }

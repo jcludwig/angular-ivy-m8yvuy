@@ -1,3 +1,10 @@
 p {
   font-family: Lato;
 }
+
+app-canvas {
+  width: 1024px;
+  height: 728px;
+
+  user-select: none;
+}

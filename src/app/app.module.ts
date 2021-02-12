@@ -6,7 +6,9 @@ import { AppComponent } from './app.component';
 import { CanvasComponent } from './canvas/canvas.component';
 import { VisualContainerComponent } from './visual-container/visual-container.component';
 import { ActionReducer, MetaReducer, StoreModule } from '@ngrx/store';
-import * as fromExplorationState from 'src/store/reducers';
+import { reducer } from 'src/store/reducers';
+import { CanvasFooterComponent } from './canvas-footer/canvas-footer.component';
+import { SectionContainerComponent } from './section-container/section-container.component';
 
 export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
   return (state, action) => {
@@ -23,9 +25,10 @@ export const metaReducers: MetaReducer<any>[] = [debug];
   imports:      [
     BrowserModule,
     FormsModule,
-    StoreModule.forRoot({ exploration: fromExplorationState.reducer }, { metaReducers })
+    StoreModule.forRoot({}, { metaReducers }),
+    StoreModule.forFeature('minerva', reducer),
   ],
-  declarations: [ AppComponent, CanvasComponent, VisualContainerComponent ],
+  declarations: [ AppComponent, CanvasComponent, VisualContainerComponent, CanvasFooterComponent, SectionContainerComponent ],
   bootstrap:    [ AppComponent ]
 })
 export class AppModule { }

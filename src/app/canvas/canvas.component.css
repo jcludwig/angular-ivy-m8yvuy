@@ -1,9 +1,21 @@
 :host {
+    border: 3px solid purple;
+    padding: 5px;
+
     display: flex;
-    border: 3px solid green;
-    padding: 10px;
+    flex-direction: column;
 }
 
-app-visual-container {
-    margin: 10px;
+app-section-container, .noSection {
+    width: 1024px;
+    height: 768px;
+
+    overflow: auto;
+
+    /* flex-grow: 1; */
+}
+
+app-canvas-footer {
+    margin-top: 5px;
+    flex-grow: initial;
 }
