@@ -16,6 +16,8 @@ interface Bindings {
 })
 export class VisualContainerComponent extends RxComponent<Bindings> {
 
+  // Dumb component, different model? i.e no view model
+
   @HostBinding('style.backgroundColor')
   public get backgroundColor(): string {
     return this.visualContainer?.background;
@@ -27,7 +29,7 @@ export class VisualContainerComponent extends RxComponent<Bindings> {
   constructor(
     private store: Store<AppState>
   ) {
-    super();
+    super('VisualContainer');
   }
 
   public onSelectDatapoint(): void {

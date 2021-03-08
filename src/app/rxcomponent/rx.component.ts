@@ -7,12 +7,18 @@ interface TypedSimpleChange<T> extends SimpleChange {
   previousValue: T;
 }
 
+export type BindingObservable<T> = {
+  readonly [P in keyof T]: Observable<T[P]>;
+}
+
 interface EmittedEvent<T> {
   name: string;
   data: T;
 }
 
-type TypedSimpleChanges<T> = Partial<{
+export type ChangesFunc<TBindings> = <K extends keyof NonFunctionProperties<TBindings>>(input: K) => Observable<TBindings[K]>
+
+export type TypedSimpleChanges<T> = Partial<{
   readonly [P in keyof T]: TypedSimpleChange<T[P]>;
 }> & SimpleChanges;
 
@@ -21,12 +27,15 @@ type NonFunctionPropertyNames<T> = {
 }[keyof T];
 type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
 
-export abstract class RxComponent<TBindings, TEmitters = []> implements OnChanges, OnDestroy {
+export abstract class RxComponent<TBindings> implements OnChanges, OnDestroy {
   private readonly ngOnChanges$ = new ReplaySubject<TypedSimpleChanges<TBindings>>(1);
   private readonly emit$ = new ReplaySubject<EmittedEvent<any>>(1);
   private readonly ngOnDestroy$ = new ReplaySubject<boolean>(1);
   /** Automatically disposes subscriptions when component destroyed */
   public readonly lifecycleSubscriptions = new Subscription();
+
+  constructor(private readonly debugName: string) {
+  }
 
    /** Observable that completes when component destroyed */
   public get onDestroy$(): Observable<boolean> {
@@ -41,6 +50,8 @@ export abstract class RxComponent<TBindings, TEmitters = []> implements OnChange
   }
 
   public ngOnChanges(changes: TypedSimpleChanges<TBindings>): void {
+    console.log(this.debugName);
+    console.log(changes);
     this.ngOnChanges$.next(changes);
   }
 

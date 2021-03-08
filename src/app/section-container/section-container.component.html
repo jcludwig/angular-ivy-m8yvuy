@@ -1,13 +1,13 @@
-<ng-container *ngIf="(section$ | async) as section">
-    <div class="container" [style.backgroundColor]="section.background">
+<ng-container *ngIf="(viewModel$ | async) as viewModel">
+    <div class="container" [style.backgroundColor]="viewModel.section.background">
         <p>
-        {{section.title}}
+        {{viewModel.section.title}}
         </p>
 
         <button (click)="newVisualContainer()">+</button>
 
         <app-visual-container
-            *ngFor="let vc of (visualContainers$ | async)"
+            *ngFor="let vc of viewModel.visualContainers"
             [visualContainer]="vc">
         </app-visual-container>
     </div>

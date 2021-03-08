@@ -104,7 +104,7 @@ export const selectSections = createSelector(
 )
 
 export function getSectionsById(sections: Dictionary<SectionState>, props: { sectionIds: SectionStateId[] }) {
-  props.sectionIds.map((sectionId) => sections[sectionId])
+  return props.sectionIds.map((sectionId) => sections[sectionId])
 }
 
 export const selectSectionIds = createSelector(

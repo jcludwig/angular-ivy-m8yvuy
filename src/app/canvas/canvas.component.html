@@ -1,10 +1,12 @@
-<app-section-container *ngIf="(currentSection$ | async) else noSection" [sectionId]="currentSection$ | async">
-</app-section-container>
-<ng-template #noSection>
-    <div class="noSection">
-        No section
-    </div>
-</ng-template>
+<ng-container *ngIf="(viewModel$ | async) as viewModel">
+    <app-section-container *ngIf="viewModel.currentSection else noSection" [sectionId]="viewModel.currentSection">
+    </app-section-container>
+    <ng-template #noSection>
+        <div class="noSection">
+            No section
+        </div>
+    </ng-template>
 
-<app-canvas-footer [sectionIds]="sections$ | async">
-</app-canvas-footer>
+    <app-canvas-footer [sectionIds]="viewModel.sections">
+    </app-canvas-footer>
+</ng-container>

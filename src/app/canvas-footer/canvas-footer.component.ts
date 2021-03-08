@@ -1,14 +1,18 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { combineLatest, Observable } from 'rxjs';
+import { combineAll, map, switchMap } from 'rxjs/operators';
 import { createBlankSection, navigateSection } from 'src/store/actions';
 import { selectSections } from 'src/store/selectors';
 import { AppState, SectionState, SectionStateId } from 'src/store/state';
-import { RxComponent } from '../rxcomponent/rx.component';
+import { ChangesFunc, RxComponent, TypedSimpleChanges } from '../rxcomponent/rx.component';
 
 interface Bindings {
   sectionIds: SectionStateId[];
+}
+
+interface ViewModel {
+   sections: SectionState[];
 }
 
 @Component({
@@ -21,16 +25,14 @@ export class CanvasFooterComponent extends RxComponent<Bindings> {
   @Input()
   public sectionIds: SectionStateId[];
 
-  public sections$: Observable<SectionState[]>;
+  public viewModel$: Observable<ViewModel>;
 
   constructor(
     private readonly store: Store<AppState>
   ) {
-    super();
+    super('CanvasFooter');
 
-    this.sections$ = this.changes$('sectionIds').pipe(
-      switchMap((ids) => this.store.select(selectSections, { sectionIds: ids }))
-    );
+    this.viewModel$ = this.buildViewModel();
   }
 
   public navToSection(section: SectionState) {
@@ -39,5 +41,17 @@ export class CanvasFooterComponent extends RxComponent<Bindings> {
 
   public newSection(): void {
     this.store.dispatch(createBlankSection());
+  }
+
+  private buildViewModel(): Observable<ViewModel> {
+    const sectionIds$ = this.changes$('sectionIds');
+
+    return combineLatest([sectionIds$]).pipe(
+      switchMap(([ids]) => this.store.select(selectSections, { sectionIds: ids })),
+      map((sections) => ({
+        sections
+      } as ViewModel)
+      )
+    );
   }
 }

@@ -1,14 +1,19 @@
 import { ChangeDetectionStrategy, Component, HostBinding, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { combineLatest, Observable } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { createVisualContainer } from 'src/store/actions';
 import { selectSection, selectSections, selectVisualContainers } from 'src/store/selectors';
 import { AppState, SectionState, SectionStateId, VisualContainerState } from 'src/store/state';
-import { RxComponent } from '../rxcomponent/rx.component';
+import { ChangesFunc, RxComponent } from '../rxcomponent/rx.component';
 
 interface Bindings {
   sectionId: SectionStateId;
+}
+
+interface ViewModel {
+  section: SectionState;
+  visualContainers: VisualContainerState[];
 }
 
 @Component({
@@ -21,25 +26,34 @@ export class SectionContainerComponent extends RxComponent<Bindings> {
   @Input()
   sectionId: SectionStateId;
 
-  public section$: Observable<SectionState>;
-  public visualContainers$: Observable<VisualContainerState[]>;
+  public viewModel$: Observable<ViewModel>;
 
   constructor(
     private readonly store: Store<AppState>
   ) {
-    super();
+    super('SectionContainer');
 
-    const sectionId$ = this.changes$('sectionId');
-    this.section$ = sectionId$.pipe(
-      switchMap((sectionId) => store.select(selectSection, { sectionId }))
-    );
-    this.visualContainers$ = sectionId$.pipe(
-      // NOTE: switch is important here
-      switchMap((sectionId) => store.select(selectVisualContainers, { sectionId }))
-    );
+    this.viewModel$ = this.buildViewModel();
   }
 
   public newVisualContainer(): void {
     this.store.dispatch(createVisualContainer({ targetSectionId: this.sectionId }));
+  }
+
+  private buildViewModel(): Observable<ViewModel> {
+    const sectionId$ = this.changes$('sectionId');
+
+    return combineLatest([sectionId$]).pipe(
+      switchMap(([sectionId]) => {
+        return combineLatest([
+          this.store.select(selectSection, { sectionId }),
+          this.store.select(selectVisualContainers, { sectionId }),
+        ]);
+      }),
+      map(([section, visualContainers]) => ({
+        section,
+        visualContainers,
+      } as ViewModel))
+    );
   }
 }

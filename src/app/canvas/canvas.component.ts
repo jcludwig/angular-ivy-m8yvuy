@@ -1,13 +1,18 @@
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { Observable } from "rxjs";
-import { switchMap } from "rxjs/operators";
+import { combineLatest, Observable } from "rxjs";
+import { filter, map, switchMap } from "rxjs/operators";
 import { selectCurrentSectionId, selectSectionIds } from "src/store/selectors";
 import { AppState, ExplorationStateId, SectionStateId } from "../../store/state";
-import { RxComponent } from "../rxcomponent/rx.component";
+import { ChangesFunc, RxComponent, TypedSimpleChanges } from "../rxcomponent/rx.component";
 
 interface Bindings {
   explorationId: ExplorationStateId;
+}
+
+export interface ViewModel {
+  currentSection: SectionStateId;
+  sections: SectionStateId[];
 }
 
 @Component({
@@ -16,23 +21,36 @@ interface Bindings {
   styleUrls: ["./canvas.component.css"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CanvasComponent extends RxComponent<Bindings> {
+export class CanvasComponent extends RxComponent<Bindings> implements Bindings {
 
   @Input()
   public explorationId: ExplorationStateId;
 
-  public currentSection$: Observable<SectionStateId>;
-  public sections$: Observable<SectionStateId[]>;
+  public viewModel$: Observable<ViewModel>;
+  constructor(
+    private readonly store: Store<AppState>
+  ) {
+    super('Canvas');
 
-  constructor(store: Store<AppState>) {
-    super();
+    this.viewModel$ = this.buildViewModel();
+  }
 
-    this.sections$ = this.changes$('explorationId').pipe(
-      switchMap((explorationId) => store.select(selectSectionIds, { explorationId }))
-    );
+  private buildViewModel(): Observable<ViewModel> {
+    const explorationId$ = this.changes$('explorationId');
 
-    this.currentSection$ = this.changes$('explorationId').pipe(
-      switchMap((explorationId) => store.select(selectCurrentSectionId, { explorationId }))
+    return explorationId$.pipe(
+      switchMap((explorationId) => {
+        return combineLatest([
+          this.store.select(selectSectionIds, { explorationId }),
+          this.store.select(selectCurrentSectionId, { explorationId }),
+        ])
+      }),
+      map(([sectionIds, currentSectionId]) => {
+        return {
+          sections: sectionIds,
+          currentSection: currentSectionId,
+        } as ViewModel;
+      })
     );
   }
 }

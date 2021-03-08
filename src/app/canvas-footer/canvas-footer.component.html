@@ -1,9 +1,11 @@
-<button class="newSection" (click)="newSection()">+</button>
+<ng-container *ngIf="(viewModel$ | async) as viewModel">
+    <button class="newSection" (click)="newSection()">+</button>
 
-<div
-    class="section"
-    *ngFor="let section of (sections$ | async)"
-    (click)="navToSection(section)"
-    [style.backgroundColor]="section.background">
-    {{section.title}}
-</div>
+    <div
+        class="section"
+        *ngFor="let section of viewModel.sections"
+        (click)="navToSection(section)"
+        [style.backgroundColor]="section.background">
+        {{section.title}}
+    </div>
+</ng-container>
